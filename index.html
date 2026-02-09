@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chocolate Day Surprise 🍫</title>
+
+  <!-- Handwritten fonts (optional, will fallback if blocked) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Great+Vibes&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg1:#2b0a1f;
+      --bg2:#6a0f2b;
+      --bg3:#ff4d7d;
+      --stroke: rgba(255,255,255,.18);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.72);
+      --gold: #ffd36a;
+
+      --chocoDark1:#2a120b;
+      --chocoDark2:#3a1a10;
+      --chocoDark3:#4a2416;
+
+      --chocoMilk1:#a56b3d;
+      --chocoMilk2:#c88955;
+
+      --pink1:#ff2f6e;
+      --pink2:#c9144c;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:var(--text);
+      overflow-x:hidden;
+      background:
+        radial-gradient(1200px 800px at 20% 20%, rgba(255,77,125,.25), transparent 60%),
+        radial-gradient(1000px 700px at 80% 30%, rgba(255,211,106,.18), transparent 55%),
+        linear-gradient(120deg, var(--bg1), var(--bg2), var(--bg3));
+    }
+
+    /* Floating emojis background (more chocolates/candies + glow) */
+    .float-layer{
+      position:fixed; inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,.25));
+    }
+    .float-emoji{
+      position:absolute;
+      opacity:0;
+      animation: floatUp linear forwards;
+      text-shadow:
+        0 0 10px rgba(255,211,106,.35),
+        0 0 18px rgba(255,77,125,.22);
+    }
+    @keyframes floatUp{
+      0%{ transform: translateY(30px) scale(.75); opacity:0;}
+      12%{opacity:.65}
+      100%{ transform: translateY(-110vh) scale(1.2); opacity:0;}
+    }
+
+    /* Layout */
+    .wrap{
+      width:min(1100px, 92vw);
+      margin: 28px auto 40px;
+      padding: 18px;
+    }
+
+    .glass{
+      background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.08));
+      border:1px solid var(--stroke);
+      border-radius: 26px;
+      padding: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+    }
+
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap:wrap;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.18);
+      font-weight: 600;
+      letter-spacing:.2px;
+      color: rgba(255,255,255,.88);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+    }
+    .dot{
+      width:10px; height:10px; border-radius:50%;
+      background: var(--gold);
+      box-shadow: 0 0 20px rgba(255,211,106,.55);
+    }
+
+    h1{
+      margin: 12px 0 6px;
+      font-size: clamp(30px, 4vw, 52px);
+      line-height: 1.05;
+      letter-spacing: -0.8px;
+    }
+    .sub{
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height:1.45;
+      max-width: 70ch;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 18px;
+    }
+    @media (max-width: 920px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    /* Pages */
+    .page{ display:none; }
+    .page.active{ display:block; }
+
+    /* Chocolate box stage */
+    .stage{
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border:1px solid rgba(255,255,255,.16);
+      border-radius: 22px;
+      padding: 18px;
+      min-height: 460px;
+      position:relative;
+      overflow:hidden;
+    }
+    .stage::before{
+      content:"";
+      position:absolute; inset:-120px -140px;
+      background:
+        radial-gradient(180px 160px at 20% 15%, rgba(255,211,106,.18), transparent 60%),
+        radial-gradient(240px 200px at 80% 30%, rgba(255,77,125,.14), transparent 65%),
+        radial-gradient(300px 260px at 50% 90%, rgba(255,255,255,.08), transparent 70%);
+      filter: blur(6px);
+      opacity:.9;
+      pointer-events:none;
+    }
+
+    .box-area{
+      position:relative;
+      height: 320px;
+      display:grid;
+      place-items:center;
+      margin-top: 8px;
+    }
+
+    .choco-box{
+      position:relative;
+      width: min(380px, 88%);
+      height: 230px;
+      transform-style: preserve-3d;
+      transition: transform .9s cubic-bezier(.2,.9,.2,1);
+      filter: drop-shadow(0 30px 50px rgba(0,0,0,.35));
+    }
+
+    .box-base{
+      position:absolute; inset: 60px 0 0 0;
+      background: linear-gradient(180deg, #2a140c, #3b1e12);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 18px;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.06);
+      overflow:hidden;
+    }
+    .box-base:before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(120px 90px at 25% 30%, rgba(255,255,255,.09), transparent 60%),
+        radial-gradient(120px 90px at 80% 20%, rgba(255,211,106,.10), transparent 60%),
+        linear-gradient(135deg, rgba(255,255,255,.08), transparent 60%);
+      pointer-events:none;
+    }
+
+    /* compartments */
+    .tray{
+      position:absolute; left:18px; right:18px; top:82px; bottom:18px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.18);
+      border: 1px dashed rgba(255,255,255,.18);
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding: 12px;
+    }
+    .slot{
+      border-radius: 12px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.15);
+    }
+
+    .box-lid{
+      position:absolute; inset: 0 0 90px 0;
+      background: linear-gradient(180deg, #3a1f12, #4b2515);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 18px;
+      transform-origin: bottom center;
+      transform: rotateX(0deg);
+      transition: transform .9s cubic-bezier(.2,.9,.2,1);
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+    }
+    .box-lid:before{
+      content:"";
+      position:absolute; inset:-40px;
+      background:
+        radial-gradient(220px 140px at 20% 40%, rgba(255,211,106,.18), transparent 60%),
+        radial-gradient(220px 140px at 80% 30%, rgba(255,77,125,.16), transparent 65%),
+        linear-gradient(135deg, rgba(255,255,255,.10), transparent 60%);
+      filter: blur(4px);
+    }
+    .ribbon{
+      width: 78%;
+      height: 50px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--pink1), var(--pink2));
+      box-shadow: 0 16px 35px rgba(255,47,110,.25);
+      border: 1px solid rgba(255,255,255,.20);
+      display:flex;
+      align-items:center; justify-content:center;
+      font-weight: 900;
+      letter-spacing:.6px;
+      position:relative;
+      z-index:2;
+      text-transform: uppercase;
+      font-size: 14px;
+    }
+    .ribbon:before, .ribbon:after{
+      content:"";
+      position:absolute;
+      width: 24px; height: 24px;
+      background: linear-gradient(180deg, var(--pink1), var(--pink2));
+      border-radius: 8px 999px 999px 8px;
+      transform: rotate(18deg);
+      left: -12px;
+      border: 1px solid rgba(255,255,255,.20);
+      box-shadow: 0 14px 30px rgba(0,0,0,.20);
+    }
+    .ribbon:after{
+      left:auto; right:-12px;
+      border-radius: 999px 8px 8px 999px;
+      transform: rotate(-18deg);
+    }
+
+    /* Open state */
+    .opened .box-lid{ transform: rotateX(-105deg) translateY(-8px); }
+    .opened{ transform: translateY(6px); }
+
+    /* More realistic chocolates */
+    .choco{
+      position:absolute;
+      width: 66px; height: 66px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.20);
+      box-shadow:
+        0 16px 30px rgba(0,0,0,.35),
+        inset 0 0 0 2px rgba(255,255,255,.06),
+        inset 0 -10px 18px rgba(0,0,0,.25);
+      display:grid;
+      place-items:center;
+      transform: translate(-50%, -50%) scale(0);
+      opacity:0;
+      transition: transform .7s cubic-bezier(.2,1.2,.2,1), opacity .6s;
+      filter: drop-shadow(0 8px 18px rgba(255,211,106,.12));
+      overflow:hidden;
+    }
+    .choco::before{
+      content:"";
+      position:absolute; inset: 8px;
+      border-radius: 14px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.14), transparent 40%),
+        radial-gradient(16px 12px at 20% 18%, rgba(255,255,255,.22), transparent 70%),
+        radial-gradient(18px 14px at 70% 25%, rgba(255,211,106,.16), transparent 75%);
+      pointer-events:none;
+      mix-blend-mode: screen;
+    }
+    .choco .seg{
+      width: 80%;
+      height: 80%;
+      border-radius: 14px;
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      padding: 6px;
+      position:relative;
+      z-index:2;
+    }
+    .choco .seg i{
+      display:block;
+      border-radius: 10px;
+      background: rgba(255,255,255,.06);
+      box-shadow:
+        inset 0 0 0 1px rgba(0,0,0,.25),
+        inset 0 8px 14px rgba(255,255,255,.06),
+        inset 0 -10px 18px rgba(0,0,0,.22);
+    }
+    .choco .stamp{
+      position:absolute;
+      bottom: 8px; right: 10px;
+      font-weight: 900;
+      font-size: 12px;
+      padding: 4px 7px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.14);
+      z-index:3;
+      backdrop-filter: blur(6px);
+    }
+    .choco.dark{
+      background: linear-gradient(180deg, var(--chocoDark3), var(--chocoDark1));
+    }
+    .choco.milk{
+      background: linear-gradient(180deg, var(--chocoMilk2), var(--chocoMilk1));
+      color: rgba(40,18,10,.9);
+      filter: drop-shadow(0 8px 18px rgba(255,211,106,.18));
+    }
+    .choco.show{
+      transform: translate(-50%, -50%) scale(1);
+      opacity:1;
+    }
+
+    /* Buttons */
+    .actions{
+      display:flex; gap: 12px; flex-wrap: wrap;
+      justify-content:center;
+      margin-top: 14px;
+      position:relative;
+      z-index:2;
+    }
+    .btn{
+      cursor:pointer;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.18);
+      color: rgba(255,255,255,.92);
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-weight: 900;
+      letter-spacing: .2px;
+      box-shadow: 0 14px 30px rgba(0,0,0,.22);
+      transition: transform .15s ease, filter .15s ease;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-2px); filter: brightness(1.07);}
+    .btn.primary{
+      background: linear-gradient(180deg, var(--pink1), var(--pink2));
+      border-color: rgba(255,255,255,.22);
+    }
+    .btn.ghost{ background: rgba(255,255,255,.10); }
+
+    /* Right: messages */
+    .panel{
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border:1px solid rgba(255,255,255,.16);
+      border-radius: 22px;
+      padding: 18px;
+      min-height: 460px;
+      position:relative;
+      overflow:hidden;
+    }
+    .panel h2{
+      margin: 6px 0 10px;
+      font-size: 20px;
+      letter-spacing: -.2px;
+    }
+    .msgbox{
+      border-radius: 18px;
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.16);
+      padding: 14px;
+      min-height: 230px;
+      max-height: 310px;
+      overflow:auto;
+      position:relative;
+    }
+    .msg{
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 18px;
+      padding: 14px 14px;
+      margin: 10px 0;
+      box-shadow: 0 14px 30px rgba(0,0,0,.16);
+      transform: translateY(8px);
+      opacity:0;
+      animation: popIn .6s ease forwards;
+    }
+    @keyframes popIn{ to{ transform: translateY(0); opacity:1; } }
+    .msg .t{ font-weight: 900; margin-bottom: 6px; color: rgba(255,255,255,.92); }
+    .msg .b{ color: rgba(255,255,255,.78); line-height: 1.45; font-weight: 700; }
+
+    .hint{
+      margin-top: 10px;
+      color: rgba(255,255,255,.74);
+      font-size: 13px;
+      line-height:1.4;
+    }
+
+    /* Sparkles burst */
+    .burst{
+      position:absolute;
+      left:50%; top:45%;
+      width: 10px; height:10px;
+      pointer-events:none;
+      z-index:5;
+    }
+    .spark{
+      position:absolute;
+      width: 8px; height: 8px;
+      border-radius: 999px;
+      background: rgba(255,211,106,.95);
+      box-shadow: 0 0 16px rgba(255,211,106,.55);
+      transform: translate(-50%,-50%) scale(.6);
+      opacity:0;
+    }
+    .spark.play{ animation: sparkOut .9s ease forwards; }
+    @keyframes sparkOut{
+      0%{ opacity:0; transform: translate(-50%,-50%) scale(.4); }
+      10%{ opacity:1; }
+      100%{ opacity:0; transform: translate(var(--x), var(--y)) scale(1.2); }
+    }
+
+    /* Footer text */
+    .foot{
+      margin-top: 16px;
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      color: rgba(255,255,255,.65);
+      font-weight: 650;
+      flex-wrap: wrap;
+    }
+
+    /* ================= Gift Page ================= */
+    .gift-stage{
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border:1px solid rgba(255,255,255,.16);
+      border-radius: 22px;
+      padding: 18px;
+      min-height: 520px;
+      position:relative;
+      overflow:hidden;
+    }
+    .gift-stage::before{
+      content:"";
+      position:absolute; inset:-160px -180px;
+      background:
+        radial-gradient(260px 220px at 18% 20%, rgba(255,211,106,.22), transparent 60%),
+        radial-gradient(300px 240px at 80% 30%, rgba(255,77,125,.18), transparent 65%),
+        radial-gradient(420px 320px at 45% 90%, rgba(255,255,255,.08), transparent 72%);
+      filter: blur(8px);
+      opacity:.95;
+      pointer-events:none;
+    }
+
+    .gift-grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 16px;
+      align-items: start;
+      position:relative;
+      z-index:2;
+    }
+    @media (max-width: 920px){
+      .gift-grid{ grid-template-columns: 1fr; }
+    }
+
+    .gift-left, .gift-right{
+      border-radius: 20px;
+      background: rgba(0,0,0,.16);
+      border: 1px solid rgba(255,255,255,.16);
+      padding: 16px;
+      min-height: 470px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    /* Big gift box */
+    .giftbox-wrap{
+      height: 260px;
+      display:grid;
+      place-items:center;
+      margin-top: 10px;
+    }
+    .giftbox{
+      position:relative;
+      width: 230px; height: 190px;
+      transform-style: preserve-3d;
+      filter: drop-shadow(0 30px 50px rgba(0,0,0,.35));
+      cursor:pointer;
+      user-select:none;
+    }
+    .giftbox .base{
+      position:absolute; left:0; right:0; bottom:0;
+      height: 130px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255,47,110,.35), rgba(201,20,76,.25));
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,.06),
+        inset 0 -18px 30px rgba(0,0,0,.20);
+      overflow:hidden;
+    }
+    .giftbox .base::before{
+      content:"";
+      position:absolute; inset:-20px;
+      background:
+        radial-gradient(140px 90px at 30% 20%, rgba(255,255,255,.14), transparent 60%),
+        radial-gradient(160px 120px at 75% 35%, rgba(255,211,106,.16), transparent 65%),
+        linear-gradient(135deg, rgba(255,255,255,.12), transparent 60%);
+      filter: blur(2px);
+      opacity:.85;
+    }
+    .giftbox .lid{
+      position:absolute; left:-6px; right:-6px; top: 12px;
+      height: 70px;
+      border-radius: 22px;
+      transform-origin: bottom center;
+      background: linear-gradient(180deg, rgba(255,47,110,.42), rgba(201,20,76,.28));
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.06);
+      transition: transform .9s cubic-bezier(.2,.9,.2,1);
+      overflow:hidden;
+    }
+    .giftbox .lid::before{
+      content:"";
+      position:absolute; inset:-20px;
+      background:
+        radial-gradient(120px 80px at 25% 35%, rgba(255,255,255,.14), transparent 60%),
+        radial-gradient(140px 100px at 80% 35%, rgba(255,211,106,.16), transparent 65%);
+      filter: blur(2px);
+    }
+    .giftbox .r1, .giftbox .r2{
+      position:absolute;
+      background: linear-gradient(180deg, rgba(255,211,106,.9), rgba(255,211,106,.55));
+      box-shadow: 0 14px 30px rgba(255,211,106,.20);
+      border: 1px solid rgba(255,255,255,.20);
+    }
+    .giftbox .r1{
+      width: 26px; top: 10px; bottom: 0;
+      left: 50%; transform: translateX(-50%);
+      border-radius: 999px;
+    }
+    .giftbox .r2{
+      height: 26px; left: 0; right: 0;
+      top: 90px;
+      border-radius: 999px;
+    }
+    .giftbox .bow{
+      position:absolute;
+      top: 0px; left: 50%;
+      transform: translate(-50%, -10px);
+      width: 92px; height: 64px;
+      z-index:3;
+    }
+    .giftbox .bow::before, .giftbox .bow::after{
+      content:"";
+      position:absolute;
+      width: 46px; height: 34px;
+      border-radius: 14px 24px 24px 14px;
+      background: linear-gradient(180deg, rgba(255,211,106,.95), rgba(255,211,106,.6));
+      border: 1px solid rgba(255,255,255,.25);
+      box-shadow: 0 16px 30px rgba(0,0,0,.18);
+      top: 14px;
+    }
+    .giftbox .bow::before{ left: 0; transform: rotate(12deg); }
+    .giftbox .bow::after { right: 0; transform: rotate(-12deg) scaleX(-1); }
+    .giftbox .bow i{
+      position:absolute;
+      left: 50%; top: 24px;
+      transform: translateX(-50%);
+      width: 18px; height: 18px;
+      border-radius: 999px;
+      background: rgba(255,211,106,.95);
+      border: 1px solid rgba(255,255,255,.25);
+      box-shadow: 0 10px 20px rgba(0,0,0,.14);
+    }
+    .giftbox.opened .lid{ transform: rotateX(-110deg) translateY(-8px); }
+
+    .countdown{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:10px;
+      margin-top: 12px;
+      font-weight: 900;
+      color: rgba(255,255,255,.9);
+    }
+    .count-pill{
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.20);
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+    }
+
+    /* Letter */
+    .letter-wrap{
+      margin-top: 18px;
+      display:none;
+      animation: letterPop .7s cubic-bezier(.2,1.2,.2,1) forwards;
+      transform: translateY(10px) scale(.98);
+      opacity:0;
+    }
+    @keyframes letterPop{ to{ transform: translateY(0) scale(1); opacity:1; } }
+
+    .envelope{
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+      position:relative;
+      border-radius: 20px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+      overflow:hidden;
+    }
+    .envelope .topfold{
+      height: 70px;
+      background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+      border-bottom: 1px solid rgba(255,255,255,.14);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 14px 16px;
+      font-weight: 900;
+    }
+    .envelope .seal{
+      width: 34px; height:34px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(255,47,110,.9), rgba(201,20,76,.7));
+      border: 1px solid rgba(255,255,255,.22);
+      box-shadow: 0 10px 24px rgba(255,47,110,.18);
+      display:grid;
+      place-items:center;
+    }
+    .paper{
+      background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.10));
+      padding: 18px 18px 20px;
+      position:relative;
+    }
+    .paper::before{
+      content:"";
+      position:absolute; inset:-40px;
+      background:
+        radial-gradient(220px 160px at 20% 30%, rgba(255,211,106,.14), transparent 60%),
+        radial-gradient(240px 180px at 80% 40%, rgba(255,77,125,.12), transparent 65%);
+      filter: blur(8px);
+      opacity:.8;
+      pointer-events:none;
+    }
+    .letter-text{
+      position:relative;
+      z-index:2;
+      font-family: "Great Vibes","Dancing Script","Brush Script MT","Segoe Script",cursive;
+      font-size: 26px;
+      line-height: 1.35;
+      color: rgba(255,255,255,.92);
+      text-shadow: 0 2px 12px rgba(0,0,0,.18);
+      white-space: pre-wrap;
+      padding: 6px 2px;
+    }
+    .cursor{
+      display:inline-block;
+      width: 10px;
+      transform: translateY(2px);
+      animation: blink .9s infinite;
+      opacity:.9;
+    }
+    @keyframes blink{ 0%,49%{opacity:1} 50%,100%{opacity:0} }
+
+    .mini-actions{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .nav-actions{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+      margin-bottom: 10px;
+    }
+
+    /* ===== Photo card + glow + NO CROP ===== */
+    .photo-card{
+      border-radius: 18px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.16);
+      padding: 12px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.18);
+    }
+    .glow-frame{
+      width:100%;
+      aspect-ratio: 4/5;
+      border-radius: 20px;
+      padding: 8px;
+      background: linear-gradient(135deg,#ff2f6e,#ffd36a,#ff4d7d);
+      background-size: 200% 200%;
+      animation: glowMove 4s ease infinite;
+      box-shadow:
+        0 0 25px rgba(255,47,110,.5),
+        0 0 40px rgba(255,211,106,.4),
+        0 20px 60px rgba(0,0,0,.4);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+    }
+    @keyframes glowMove{
+      0%{background-position:0% 50%;}
+      50%{background-position:100% 50%;}
+      100%{background-position:0% 50%;}
+    }
+    .love-photo{
+      width:100%;
+      height:100%;
+      object-fit: contain; /* IMPORTANT: no cropping */
+      border-radius:16px;
+      background: rgba(0,0,0,.28);
+      box-shadow: inset 0 0 30px rgba(0,0,0,.35);
+      display:block;
+    }
+    .photo-note{
+      margin-top: 10px;
+      color: rgba(255,255,255,.74);
+      font-weight: 700;
+      font-size: 13px;
+      line-height: 1.4;
+      text-align:center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="float-layer" id="floatLayer" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <div class="glass">
+      <div class="topbar">
+        <div class="pill"><span class="dot"></span> Chocolate Day Surprise — for <b>Nisuuu</b> 🍫💖</div>
+        <div class="pill">From <b>Pranay</b> ✨</div>
+      </div>
+
+      <!-- =================== MAIN PAGE =================== -->
+      <div class="page active" id="mainPage">
+        <div class="nav-actions">
+          <div class="btn ghost" id="goGift">Gift Box Page 🎁✨</div>
+        </div>
+
+        <h1>Tap to open your chocolates 🍫</h1>
+        <p class="sub">
+          Nisuuu, this is a tiny chocolate box made only for you.
+          Open it and watch the chocolates pop out with little messages. 💕🌟
+        </p>
+
+        <div class="grid">
+          <!-- Left: Chocolate box -->
+          <div class="stage">
+            <div class="box-area">
+              <div class="choco-box" id="box">
+                <div class="box-lid">
+                  <div class="ribbon">Open me 💝</div>
+                </div>
+                <div class="box-base"></div>
+                <div class="tray" aria-hidden="true">
+                  <div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div>
+                  <div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div>
+                </div>
+
+                <!-- Chocolates -->
+                <div class="choco dark" id="c1" style="left:50%; top:42%;">
+                  <div class="seg"><i></i><i></i><i></i><i></i></div>
+                  <div class="stamp">#1</div>
+                </div>
+                <div class="choco milk" id="c2" style="left:40%; top:50%;">
+                  <div class="seg"><i></i><i></i><i></i><i></i></div>
+                  <div class="stamp">#2</div>
+                </div>
+                <div class="choco dark" id="c3" style="left:60%; top:50%;">
+                  <div class="seg"><i></i><i></i><i></i><i></i></div>
+                  <div class="stamp">#3</div>
+                </div>
+                <div class="choco milk" id="c4" style="left:32%; top:44%;">
+                  <div class="seg"><i></i><i></i><i></i><i></i></div>
+                  <div class="stamp">#4</div>
+                </div>
+                <div class="choco dark" id="c5" style="left:68%; top:44%;">
+                  <div class="seg"><i></i><i></i><i></i><i></i></div>
+                  <div class="stamp">#5</div>
+                </div>
+                <div class="choco milk" id="c6" style="left:50%; top:58%;">
+                  <div class="seg"><i></i><i></i><i></i><i></i></div>
+                  <div class="stamp">#6</div>
+                </div>
+              </div>
+
+              <div class="burst" id="burst" aria-hidden="true"></div>
+            </div>
+
+            <div class="actions">
+              <div class="btn primary" id="openBtn">Open the box 🎁</div>
+              <div class="btn ghost" id="moreBtn" style="display:none;">More chocolates! 🍫✨</div>
+              <div class="btn" id="resetBtn">Reset 🔄</div>
+            </div>
+
+            <div class="foot">
+              <div>Tip: Click <b>Open the box</b> once. Then tap <b>More chocolates</b> ✨</div>
+              <div>Background: extra 🍫🍬 glow ✨</div>
+            </div>
+          </div>
+
+          <!-- Right: Messages -->
+          <div class="panel">
+            <div class="pill" style="width:max-content; margin-bottom:10px;">
+              <span class="dot"></span> Sweet messages inside 🍫
+            </div>
+            <h2>Your chocolates will drop messages here 💌</h2>
+
+            <div class="msgbox" id="msgbox">
+              <div class="msg" style="opacity:1; transform:none; animation:none;">
+                <div class="t">Start here 💗</div>
+                <div class="b">
+                  Click “Open the box” and watch the magic.
+                  Every chocolate has a tiny line from Pranay to Nisuuu ✨
+                </div>
+              </div>
+            </div>
+
+            <div class="hint">
+              You can change the lines anytime inside <b>messages[]</b>.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- =================== GIFT PAGE =================== -->
+      <div class="page" id="giftPage">
+        <div class="nav-actions">
+          <div class="btn ghost" id="backMain">← Back to Chocolates 🍫</div>
+        </div>
+
+        <h1>Gift Box Surprise 🎀</h1>
+        <p class="sub">
+          Nisuuu, click the gift box to open it… then wait for the countdown, and your letter will appear with typing magic 💌✨
+        </p>
+
+        <div class="gift-stage">
+          <div class="gift-grid">
+            <!-- Left: Gift + letter -->
+            <div class="gift-left">
+              <div class="pill" style="width:max-content;">
+                <span class="dot"></span> Tap the gift box
+              </div>
+
+              <div class="giftbox-wrap">
+                <div class="giftbox" id="giftBox" title="Click me!">
+                  <div class="lid"></div>
+                  <div class="bow"><i></i></div>
+                  <div class="base"></div>
+                  <div class="r1"></div>
+                  <div class="r2"></div>
+                </div>
+              </div>
+
+              <div class="countdown" id="countRow" style="display:none;">
+                <div class="count-pill">Opening in</div>
+                <div class="count-pill" id="countNum">5</div>
+                <div class="count-pill">seconds ✨</div>
+              </div>
+
+              <div class="letter-wrap" id="letterWrap">
+                <div class="envelope">
+                  <div class="topfold">
+                    <div>For Nisuuu 💗</div>
+                    <div class="seal">💌</div>
+                  </div>
+                  <div class="paper">
+                    <div class="letter-text" id="letterText"></div>
+                  </div>
+                </div>
+
+                <div class="mini-actions">
+                  <div class="btn ghost" id="replayLetter">Replay typing ✍️</div>
+                  <div class="btn" id="resetGift">Reset gift 🔄</div>
+                </div>
+              </div>
+
+              <div class="hint" style="margin-top:10px;">
+                Tip: If fonts don’t load, it will still look handwritten using device cursive fonts.
+              </div>
+            </div>
+
+            <!-- Right: Photo (repo image only) -->
+            <div class="gift-right">
+              <div class="pill" style="width:max-content;">
+                <span class="dot"></span> Photo for Nisuuu 💖
+              </div>
+
+              <div class="photo-card" style="margin-top:10px;">
+                <div class="glow-frame">
+                  <img
+                    src="nisuuu.jpg"
+                    alt="Nisuuu"
+                    class="love-photo"
+                    onerror="this.style.display='none'; this.parentElement.insertAdjacentHTML('beforeend','<div style=&quot;color:rgba(255,255,255,.8);font-weight:800;text-align:center;padding:18px;line-height:1.4;&quot;>Photo not found 😭<br/>Make sure <b>nisuuu.jpg</b> is in the same folder as this HTML file.</div>')"
+                  />
+                </div>
+                <div class="photo-note">No crop mode: full photo visible ✅</div>
+              </div>
+
+              <div class="msgbox" style="margin-top:14px; min-height: 150px;">
+                <div class="msg" style="opacity:1; transform:none; animation:none;">
+                  <div class="t">Little note 🌟</div>
+                  <div class="b">
+                    After the countdown, your letter opens and types itself in a handwritten style.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="burst" id="giftBurst" aria-hidden="true"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    /* ================= Floating background ================= */
+    const floatLayer = document.getElementById('floatLayer');
+    const emojis = ["🍫","🍫","🍫","🍬","🍭","💗","💖","💝","🌟","✨","🥰","😘","🫶","💞","🍪","🧁"];
+    function spawnFloatEmoji(){
+      const el = document.createElement('div');
+      el.className = 'float-emoji';
+      el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+
+      const left = Math.random()*100;
+      const size = 14 + Math.random()*26;
+      const dur = 5 + Math.random()*7;
+      const delay = Math.random()*0.6;
+
+      el.style.left = left + 'vw';
+      el.style.bottom = (-20 - Math.random()*24) + 'px';
+      el.style.fontSize = size + 'px';
+      el.style.animationDuration = dur + 's';
+      el.style.animationDelay = delay + 's';
+
+      const glowGold = (0.18 + Math.random()*0.18).toFixed(2);
+      const glowPink = (0.10 + Math.random()*0.18).toFixed(2);
+      el.style.textShadow =
+        `0 0 10px rgba(255,211,106,${glowGold}), 0 0 18px rgba(255,77,125,${glowPink})`;
+
+      floatLayer.appendChild(el);
+      setTimeout(()=> el.remove(), (dur+delay)*1000);
+    }
+    setInterval(spawnFloatEmoji, 240);
+
+    /* ================= Sparkle burst ================= */
+    function makeBurst(elId){
+      const burst = document.getElementById(elId);
+      return function sparkBurst(){
+        burst.innerHTML = '';
+        const N = 18;
+        for(let i=0;i<N;i++){
+          const s = document.createElement('div');
+          s.className = 'spark';
+          const ang = (Math.PI*2*i)/N;
+          const dist = 90 + Math.random()*90;
+          const dx = Math.cos(ang)*dist;
+          const dy = Math.sin(ang)*dist;
+          s.style.setProperty('--x', dx+'px');
+          s.style.setProperty('--y', dy+'px');
+          burst.appendChild(s);
+          requestAnimationFrame(()=> s.classList.add('play'));
+        }
+      }
+    }
+    const sparkBurstMain = makeBurst('burst');
+    const sparkBurstGift = makeBurst('giftBurst');
+
+    /* ================= Chocolates + messages ================= */
+    const box = document.getElementById('box');
+    const openBtn = document.getElementById('openBtn');
+    const moreBtn = document.getElementById('moreBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const msgbox = document.getElementById('msgbox');
+
+    const chocolates = [
+      document.getElementById('c1'),
+      document.getElementById('c2'),
+      document.getElementById('c3'),
+      document.getElementById('c4'),
+      document.getElementById('c5'),
+      document.getElementById('c6')
+    ];
+
+    const messages = [
+      { t:"Chocolate #1 🍫", b:"humko tumse chocolate nhi chahiye, tumhare kiss se jyada meetha aur ky hoga" },
+      { t:"Chocolate #2 🍬", b:"shaadi ke baad tumhare upar chocolates ka barish hogaaa" },
+      { t:"Chocolate #3 🍫", b:"i am your dark  chocolate" },
+      { t:"Chocolate #4 💖", b:"tum sabse sundar hai meri jaan , yes baby" },
+      { t:"Chocolate #5 🍫", b:"now ab meraa chocolate do" },
+      { t:"Chocolate #6 💝", b:"i love you so much" }
+    ];
+
+    let opened = false;
+    let index = 0;
+
+    function addMsg(t,b){
+      const card = document.createElement('div');
+      card.className = 'msg';
+      card.innerHTML = `<div class="t">${t}</div><div class="b">${b}</div>`;
+      msgbox.appendChild(card);
+      msgbox.scrollTop = msgbox.scrollHeight;
+    }
+
+    function showNextChocolate(){
+      if(index >= chocolates.length){
+        addMsg("All chocolates delivered 🍫✅", "Ab ek smile do mere liye, Nisuuu 💗✨");
+        moreBtn.textContent = "Replay chocolates 🔁🍫";
+        index = 0;
+        chocolates.forEach(c=>c.classList.remove('show'));
+        return;
+      }
+      const c = chocolates[index];
+      c.classList.add('show');
+      addMsg(messages[index].t, messages[index].b);
+      sparkBurstMain();
+      index++;
+    }
+
+    openBtn.addEventListener('click', ()=>{
+      if(!opened){
+        box.classList.add('opened');
+        opened = true;
+        moreBtn.style.display = 'inline-block';
+        setTimeout(showNextChocolate, 650);
+        setTimeout(showNextChocolate, 1200);
+      }else{
+        showNextChocolate();
+      }
+    });
+
+    moreBtn.addEventListener('click', showNextChocolate);
+
+    resetBtn.addEventListener('click', ()=>{
+      opened = false;
+      index = 0;
+      box.classList.remove('opened');
+      chocolates.forEach(c=>c.classList.remove('show'));
+      moreBtn.style.display = 'none';
+      moreBtn.textContent = "More chocolates! 🍫✨";
+      msgbox.innerHTML = `
+        <div class="msg" style="opacity:1; transform:none; animation:none;">
+          <div class="t">Start here 💗</div>
+          <div class="b">
+            Click “Open the box” and watch the magic.
+            Every chocolate has a tiny line from Pranay to Nisuuu ✨
+          </div>
+        </div>
+      `;
+    });
+
+    box.addEventListener('click', ()=>{
+      if(!opened) openBtn.click();
+      else showNextChocolate();
+    });
+
+    /* ================= Page navigation ================= */
+    const mainPage = document.getElementById('mainPage');
+    const giftPage = document.getElementById('giftPage');
+    const goGift = document.getElementById('goGift');
+    const backMain = document.getElementById('backMain');
+
+    function showPage(which){
+      if(which === 'gift'){
+        mainPage.classList.remove('active');
+        giftPage.classList.add('active');
+        sparkBurstGift();
+      }else{
+        giftPage.classList.remove('active');
+        mainPage.classList.add('active');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    goGift.addEventListener('click', ()=> showPage('gift'));
+    backMain.addEventListener('click', ()=> showPage('main'));
+
+    /* ================= Gift box + countdown + letter + typing ================= */
+    const giftBox = document.getElementById('giftBox');
+    const countRow = document.getElementById('countRow');
+    const countNum = document.getElementById('countNum');
+    const letterWrap = document.getElementById('letterWrap');
+    const letterText = document.getElementById('letterText');
+    const replayLetter = document.getElementById('replayLetter');
+    const resetGift = document.getElementById('resetGift');
+
+    const letterBody =
+`happy chocolate day nisuuu , so sorry tumko chocolate nhi de paye, i love you so much my jaaan , ek baar shaadi hone do , phir dekhna, tab to tum v nhi rok payegi , aur jese hum dono phone pe chocolate khilate hai wese hi tumko khilayenge, samaj gyii naa, nutella v kharidengeeeee,,tumhare neck pe lageynge and thennnnnnnn, jyada wild ho rha hai ruk jana chahiye, anyways , i love you so much jaan , tum humse apna feeling share ki aaj, humko purpose ki, i love you jaan ,hum bohoy lucky hai tum mere sath ho , hum chahte tum aise hi mere se pyaaar kar humesa, ekdam obsession wala, kyo hum bogot pyaar karte hai , hum tumko khud se alag nhi hone denge, hum tumse shaadi karenge, baache karenge, phir hum dono dada dadi banenge , nana nani banenge, uss samay v  hum tumko daily kiss karengeeeee, bohot pyaar karenge  ,tum bass dekhnnnaaa, hum tumko kitna jyadanpyaar karenge, kitna tumko sambhaal ke rakhengeeee, i love you jaan ,humesa mere bann ke rehna`;
+
+    let giftOpened = false;
+    let countdownTimer = null;
+    let typingTimer = null;
+
+    function typeLetter(text, speed=24){
+      if(typingTimer) clearInterval(typingTimer);
+      letterText.textContent = "";
+      const cursor = document.createElement('span');
+      cursor.className = 'cursor';
+      cursor.textContent = '▍';
+      letterText.appendChild(cursor);
+
+      let i = 0;
+      typingTimer = setInterval(()=>{
+        cursor.remove();
+        letterText.textContent += text[i] || "";
+        letterText.appendChild(cursor);
+        i++;
+        if(i > text.length){
+          clearInterval(typingTimer);
+          cursor.remove();
+        }
+      }, speed);
+    }
+
+    function startCountdown(){
+      countRow.style.display = 'flex';
+      let n = 5;
+      countNum.textContent = n;
+
+      if(countdownTimer) clearInterval(countdownTimer);
+      countdownTimer = setInterval(()=>{
+        n--;
+        countNum.textContent = n;
+        sparkBurstGift();
+        if(n <= 0){
+          clearInterval(countdownTimer);
+          countRow.style.display = 'none';
+          letterWrap.style.display = 'block';
+          setTimeout(()=>{
+            typeLetter(letterBody, 22);
+            sparkBurstGift();
+          }, 350);
+        }
+      }, 950);
+    }
+
+    giftBox.addEventListener('click', ()=>{
+      if(giftOpened) return;
+      giftOpened = true;
+      giftBox.classList.add('opened');
+      sparkBurstGift();
+      setTimeout(startCountdown, 600);
+    });
+
+    replayLetter.addEventListener('click', ()=>{
+      if(letterWrap.style.display !== 'block') return;
+      typeLetter(letterBody, 18);
+      sparkBurstGift();
+    });
+
+    resetGift.addEventListener('click', ()=>{
+      giftOpened = false;
+      giftBox.classList.remove('opened');
+      countRow.style.display = 'none';
+      letterWrap.style.display = 'none';
+      letterText.textContent = "";
+      if(countdownTimer) clearInterval(countdownTimer);
+      if(typingTimer) clearInterval(typingTimer);
+      sparkBurstGift();
+    });
+  </script>
+</body>
+</html>
